@@ -338,6 +338,15 @@ private:
     detail::IntrusiveListImplementation m_Implementation;
 };
 
+template <class HolderT, class T = HolderT>
+class IntrusiveListBaseNode : IntrusiveListNode {};
+
+template <class HolderT, class T = HolderT>
+class IntrusiveListBaseNodeTraits {
+public:
+    using BaseNodeType = IntrusiveListBaseNode<HolderT>;
+};
+
 template <class HolderT, IntrusiveListNode HolderT::*Member, class T = HolderT>
 class IntrusiveListMemberNodeTraits {
     friend class IntrusiveList<T, IntrusiveListMemberNodeTraits>;
@@ -358,5 +367,4 @@ class IntrusiveListMemberNodeTraits {
         return reinterpret_cast<uintptr_t>(&(reinterpret_cast<T*>(0)->*Member));
     }
 };
-
 }  // namespace nn::util
