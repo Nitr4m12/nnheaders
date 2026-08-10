@@ -338,13 +338,28 @@ private:
     detail::IntrusiveListImplementation m_Implementation;
 };
 
-template <class HolderT, class T = HolderT>
-class IntrusiveListBaseNode : IntrusiveListNode {};
+template <class T, class Tag = T>
+class IntrusiveListBaseNode : public IntrusiveListNode {
+public:
+    IntrusiveListBaseNode();
+};
 
-template <class HolderT, class T = HolderT>
+template <class T, class Tag = T>
 class IntrusiveListBaseNodeTraits {
 public:
-    using BaseNodeType = IntrusiveListBaseNode<HolderT>;
+    using BaseNodeType = IntrusiveListBaseNode<T, Tag>;
+
+    static IntrusiveListNode& GetNode(T& ref) { return ref; }
+
+    static const IntrusiveListNode& GetNode(const T& ref) { return ref; }
+
+    static T& GetItem(IntrusiveListNode& node) {
+        return *reinterpret_cast<T*>(node);
+    }
+
+    static const T& GetItem(const IntrusiveListNode& node) {
+        return *reinterpret_cast<const T*>(node);
+    }
 };
 
 template <class HolderT, IntrusiveListNode HolderT::*Member, class T = HolderT>
