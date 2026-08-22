@@ -1,5 +1,5 @@
 namespace nn::util {
-template<typename T>
+template <typename T>
 inline int Strlcpy(T* pOutDst, const T* pSrc, int count) {
     int length = 0;
 
@@ -17,17 +17,33 @@ inline int Strlcpy(T* pOutDst, const T* pSrc, int count) {
     return length;
 }
 
-template<typename T>
+template <typename T>
 inline int Strnlen(const T* pStr, int count) {
     int length = 0;
 
-    while (--count && *pStr++) {
-        ++length;
+    if (count > 0) {
+        while (count && *pStr) {
+            ++pStr;
+            ++length;
+            --count;
+        }
     }
 
     return length;
 }
 
-template<typename T>
-inline int Strncmp(const T* pStr1, const T* pStr2, int count);
+template <typename T>
+inline int Strncmp(const T* pStr1, const T* pStr2, int count) {
+    if (count == 0)
+        return 0;
+
+    T c1, c2;
+    
+    do {    
+        c1 = *pStr1++;
+        c2 = *pStr2++;
+    } while (c1 && c1 == c2 && --count);
+
+    return c1 - c2;
 }
+} // namespace nn::util
