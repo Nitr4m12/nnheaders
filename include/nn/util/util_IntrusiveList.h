@@ -354,11 +354,11 @@ public:
     static const IntrusiveListNode& GetNode(const T& ref) { return ref; }
 
     static T& GetItem(IntrusiveListNode& node) {
-        return *reinterpret_cast<T*>(node);
+        return reinterpret_cast<T&>(node);
     }
 
     static const T& GetItem(const IntrusiveListNode& node) {
-        return *reinterpret_cast<const T*>(node);
+        return reinterpret_cast<const T&>(node);
     }
 };
 
