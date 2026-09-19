@@ -37,8 +37,9 @@ private:
         m_Prev = node;
     }
 
-    void LinkNext(IntrusiveListNode*);
-    void LinkNext(IntrusiveListNode*, IntrusiveListNode*);
+    void LinkNext(IntrusiveListNode* node) { LinkNext(node, node); }
+
+    void LinkNext(IntrusiveListNode* first, IntrusiveListNode* last);
 
     void Unlink() { Unlink(m_Next); }
 
@@ -159,9 +160,9 @@ public:
 
     void push_back(reference node) { m_Root.LinkPrev(&node); }
 
-    void push_front(reference);
-    void pop_back();
+    void push_front(reference node) { m_Root.LinkNext(&node); }
 
+    void pop_back() { m_Root.GetPrev()->Unlink(); }
     void pop_front() { m_Root.GetNext()->Unlink(); }
 
     reference back() { return *m_Root.GetPrev(); }
@@ -334,9 +335,9 @@ public:
     IntrusiveList() : m_Implementation() {}
 
     void push_back(reference value) { m_Implementation.push_back(ToNode(value)); }
+    void push_front(reference value) { m_Implementation.push_front(ToNode(value)); }
 
-    void push_front(reference);
-    void pop_back();
+    void pop_back() { m_Implementation.pop_back(); }
     void pop_front() { m_Implementation.pop_front(); }
 
     reference front() { return ToReference(m_Implementation.front()); }
@@ -389,9 +390,9 @@ public:
 
 private:
     IntrusiveListNode& ToNode(reference ref) const { return NodeTraits::GetNode(ref); }
-    
+
     const IntrusiveListNode& ToNode(const_reference ref) const { return NodeTraits::GetNode(ref); }
-    
+
     reference ToReference(IntrusiveListNode& node) const { return NodeTraits::GetItem(node); }
 
     const_reference ToReference(const IntrusiveListNode& node) const {
