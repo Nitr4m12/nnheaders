@@ -81,7 +81,7 @@ private:
     ContainerList m_ContainerList;
     const SoundArchive* m_pCurrentSoundArchive{};
     const SoundDataManager* m_pCurrentSoundDataManager{};
-    SoundArchiveParametersHook* m_pParametersHook{};
+    SoundArchiveParametersHook* m_pParametersHook;
 };
 static_assert(sizeof(SoundArchiveManager) == 0x38);
 
