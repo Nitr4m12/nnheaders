@@ -9,8 +9,6 @@ namespace nn::atk::detail {
 
 class SoundArchiveManager {
 public:
-    using ContainerList = IntrusiveList<AddonSoundArchiveContainer>;
-
     class SnapShot {
     public:
         SnapShot(const SoundArchive& mainSoundArchive, const SoundDataManager& mainSoundDataManager,
@@ -41,31 +39,49 @@ public:
     ~SoundArchiveManager();
 
     void Initialize(const SoundArchive* pSoundArchive, const SoundDataManager* pSoundDataManager);
-
-    void ChangeTargetArchive(const char* soundArchiveName);
-
     void Finalize();
 
-    void Add(AddonSoundArchiveContainer&);
-    void Remove(AddonSoundArchiveContainer&);
+    void Add(AddonSoundArchiveContainer& container);
+    void Remove(AddonSoundArchiveContainer& container);
 
     bool IsAvailable() const;
 
-    AddonSoundArchive* GetAddonSoundArchive(const char*) const;
-    SoundDataManager* GetAddonSoundDataManager(const char*) const;
-    AddonSoundArchiveContainer* GetAddonSoundArchiveContainer(s32) const;
-    AddonSoundArchiveContainer* GetAddonSoundArchiveContainer(s32);
+    void ChangeTargetArchive(const char* soundArchiveName);
 
-    void SetParametersHook(SoundArchiveParametersHook*);
-    SoundArchiveParametersHook* GetParametersHook() const;
+    SnapShot GetSnapShot() const {
+        SnapShot snapShot{*m_pMainSoundArchive, *m_pMainSoundDataManager, *m_pCurrentSoundArchive,
+                          *m_pCurrentSoundDataManager};
+        return snapShot;
+    }
+
+    const SoundArchive* GetMainSoundArchive() const { return m_pMainSoundArchive; }
+    const SoundDataManager* GetMainSoundDataManager() const { return m_pMainSoundDataManager; }
+
+    const SoundArchive* GetCurrentSoundArchive() const { return m_pCurrentSoundArchive; }
+    const SoundDataManager* GetCurrentSoundDataManager() const {
+        return m_pCurrentSoundDataManager;
+    }
+
+    const AddonSoundArchive* GetAddonSoundArchive(const char* soundArchiveName) const;
+    int GetAddonSoundArchiveCount() const { return m_ContainerList.Count(); }
+
+    const AddonSoundArchiveContainer* GetAddonSoundArchiveContainer(int index) const;
+    AddonSoundArchiveContainer* GetAddonSoundArchiveContainer(int index);
+
+    const SoundDataManager* GetAddonSoundDataManager(const char* soundArchiveName) const;
+
+    void SetParametersHook(SoundArchiveParametersHook* parametersHook);
+    SoundArchiveParametersHook* GetParametersHook() const { return m_pParametersHook; }
 
 private:
-    SoundArchive* m_pMainSoundArchive;
-    SoundDataManager* m_pMainSoundDataManager;
+    using ContainerList = IntrusiveList<AddonSoundArchiveContainer>;
+
+    const SoundArchive* m_pMainSoundArchive{};
+    const SoundDataManager* m_pMainSoundDataManager{};
     ContainerList m_ContainerList;
-    SoundArchive* m_pCurrentSoundArchive;
-    SoundDataManager* m_pCurrentSoundDataManager;
-    SoundArchiveParametersHook* m_pParametersHook;
+    const SoundArchive* m_pCurrentSoundArchive{};
+    const SoundDataManager* m_pCurrentSoundDataManager{};
+    SoundArchiveParametersHook* m_pParametersHook{};
 };
 static_assert(sizeof(SoundArchiveManager) == 0x38);
 
