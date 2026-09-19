@@ -234,14 +234,14 @@ public:
 
     class const_iterator {
     public:
-        typedef T value_type;
+        typedef const T value_type;
         typedef difference_type difference_type;
         typedef value_type* pointer;
         typedef value_type& reference;
         typedef std::bidirectional_iterator_tag iterator_category;
 
-        reference operator*() const;
-        pointer operator->() const;
+        reference operator*() const { return NodeTraits::GetItem(*m_Iterator); }
+        pointer operator->() const { return &NodeTraits::GetItem(*m_Iterator); }
 
         const_iterator& operator++() {
             ++m_Iterator;
@@ -342,18 +342,18 @@ public:
 
     reference front() { return ToReference(m_Implementation.front()); }
     const_reference front() const { return ToReference(m_Implementation.front()); }
+
     reference back() { return ToReference(m_Implementation.back()); }
     const_reference back() const { return ToReference(m_Implementation.back()); }
 
     iterator begin() { return m_Implementation.begin(); }
     const_iterator begin() const { return m_Implementation.begin(); }
-
-    const_iterator cbegin() const;
+    const_iterator cbegin() const { return const_iterator(m_Implementation.begin()); }
 
     iterator end() { return m_Implementation.end(); }
     const_iterator end() const { return m_Implementation.end(); }
+    const_iterator cend() const { return const_iterator(m_Implementation.begin()); }
 
-    const_iterator cend() const;
     reverse_iterator rbegin();
     const_reverse_iterator rbegin() const;
     const_reverse_iterator crbegin() const;
